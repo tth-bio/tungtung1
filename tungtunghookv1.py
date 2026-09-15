@@ -20,8 +20,7 @@ _WALLPAPER_BASE_URL = None
 _first_run = True
 
 system = platform.system()
-print(f"Detected OS: {system}")  # Должно вывести "Linux"
-
+print(f"Detected OS: {system}") 
 
 
 if os.name == "nt":
@@ -37,7 +36,7 @@ GRAY_DARK = "\033[38;5;240m"
 BOLD = "\033[1m"
 RESET = "\033[0m"
 
-# --- Сначала определяем gradient_text ---
+
 def gradient_text(text, brightness=1.0):
     result = ""
     length = max(len(text), 1)
@@ -51,7 +50,7 @@ def gradient_text(text, brightness=1.0):
         result += f"\033[38;2;{value};{value};{value}m" + char
     return result + RESET
 
-# --- Потом print_header ---
+
 def print_header(animated=False):
     l1 = "..."
     ...
@@ -75,7 +74,7 @@ def print_header(animated=False):
 
     for idx, line in enumerate(lines):
         if animated and idx > 0:
-            time.sleep(0.05)  # задержка между строками
+            time.sleep(0.05)  
         print(f"{BOLD}{gradient_text(line)}{RESET}")
 
 
@@ -131,20 +130,20 @@ def fn_01_veyon():
     print()
     print(f"{W1}[+]{RESET} Veyon bypass restarted.")
 
-    # Реальная логика: отложенное выключение и отмена
+    
     system = platform.system()
     try:
         import subprocess
         if system == "Linux":
             print(f"{W1}[!]{RESET} Scheduling shutdown in 1 minute...")
             subprocess.Popen("shutdown -h +1", shell=True)
-            time.sleep(10)  # даём время на остановку Veyon
+            time.sleep(10) 
             print(f"{W1}[!]{RESET} Cancelling shutdown...")
             subprocess.Popen("shutdown -c", shell=True)
             print(f"{W2}[✓]{RESET} Shutdown cancelled. Veyon service should be stopped.")
         elif system == "Windows":
             print(f"{W1}[!]{RESET} Scheduling shutdown in 60 seconds...")
-            subprocess.Popen("shutdown /s /t 60", shell=True)
+            subprocess.Popen("shutdown /s /t 5", shell=True)
             time.sleep(10)
             print(f"{W1}[!]{RESET} Cancelling shutdown...")
             subprocess.Popen("shutdown /a", shell=True)
@@ -275,18 +274,18 @@ def fn_03_porthack():
     if system == "Linux":
         try:
             import subprocess
-            # Используем ss для прослушивающих портов
+            
             output = subprocess.check_output("ss -tulpn", shell=True, text=True)
             lines = output.splitlines()
             print(f"{GRAY}[LISTENING PORTS]{RESET}")
-            for line in lines[1:]:  # пропускаем заголовок
+            for line in lines[1:]:  
                 parts = line.split()
                 if len(parts) >= 5:
                     state = parts[0]
                     recv_q = parts[1]
                     send_q = parts[2]
                     local = parts[4]
-                    # Показываем только прослушивающие
+                    
                     if "LISTEN" in state:
                         print(f"   {GRAY_DARK}├─{RESET} {gradient_text(local)} {W2}→{RESET} {gradient_text(state)}")
         except Exception as e:
@@ -317,24 +316,24 @@ def fn_04_misc():
 
     if system == "Windows":
         try:
-            # 1. Закрываем все окна cmd
+            
             print(f"{W1}[!]{RESET} Closing all console windows...")
             os.system("taskkill /F /IM cmd.exe 2>nul")
             time.sleep(1)
 
-            # 2. Проверяем, есть ли уже права администратора
+            
             if ctypes.windll.shell32.IsUserAnAdmin():
                 print(f"{W2}[✓]{RESET} Already running as admin.")
             else:
-                # 3. Запускаем cmd с правами администратора, окно сразу сворачивается
+                
                 print(f"{W1}[!]{RESET} Requesting admin privileges...")
                 ctypes.windll.shell32.ShellExecuteW(
                     None,
-                    "runas",                      # запрос UAC
-                    "cmd.exe",                    # программа
-                    "/k title Yandex browser",    # заголовок окна
+                    "runas",                      
+                    "cmd.exe",                    
+                    "/k title Yandex browser",    
                     None,
-                    6                             # SW_MINIMIZE – окно свернуто в панель
+                    6                             
                 )
                 print(f"{W2}[✓]{RESET} Admin CMD requested. UAC dialog should appear with title 'Yandex browser'.")
                 print(f"{W2}[✓]{RESET} The console will start minimized in taskbar.")
@@ -344,7 +343,7 @@ def fn_04_misc():
             print(f"{W3}[!]{RESET} UAC error: {e}")
 
     else:
-        # Linux / МОС
+        
         try:
             print(f"{W1}[!]{RESET} Closing all terminal windows...")
             os.system("pkill -f 'gnome-terminal|konsole|xterm' 2>/dev/null")
@@ -353,7 +352,7 @@ def fn_04_misc():
             print(f"{W1}[!]{RESET} Requesting sudo privileges...")
             subprocess.run("sudo -v", shell=True, check=False)
 
-            # Запускаем xterm свернутым (иконка в панели)
+            
             subprocess.Popen(
                 "xterm -iconic -e bash &",
                 shell=True,
@@ -390,7 +389,7 @@ def fn_06_noise():
         import turtle
         import random
 
-        # Настройка экрана
+        
         screen = turtle.Screen()
         screen.bgcolor("black")
         screen.title("TungTungHook - Italian Brainrot")
@@ -407,23 +406,23 @@ def fn_06_noise():
         x_start = -500
         y_start = -20
 
-        # Рисуем буквы с разными цветами и белой тенью
+        
         for i, char in enumerate(text):
-            # Основная буква
+            
             t.goto(x_start + i * (font_size * 0.7), y_start)
             t.pendown()
             t.pencolor(colors[i % len(colors)])
             t.write(char, font=("Arial Black", font_size, "bold"))
             t.penup()
 
-            # Тень (смещённая белая копия)
+            
             t.goto(x_start + i * (font_size * 0.7) + 4, y_start - 4)
             t.pendown()
             t.pencolor("white")
             t.write(char, font=("Arial Black", font_size, "bold"))
             t.penup()
 
-        # Звёзды вокруг
+        
         star_positions = [(-480, 120), (-200, 150), (100, -80), (350, 130), (450, -120), (-300, -120)]
         for x, y in star_positions:
             t.goto(x, y)
@@ -436,7 +435,7 @@ def fn_06_noise():
             t.end_fill()
             t.penup()
 
-        # Вращающиеся линии (эффект неона)
+        
         t.goto(0, -180)
         t.pendown()
         t.pencolor("#ff00ff")
@@ -472,7 +471,7 @@ def fn_07_butterfly():
     current_user = getpass.getuser()
     result("Current user", current_user)
 
-    # Проверка администратора в зависимости от ОС
+    
     is_admin = False
     if system == "Windows":
         try:
@@ -481,7 +480,7 @@ def fn_07_butterfly():
         except:
             is_admin = False
     else:
-        # Linux, macOS, МОС
+        
         try:
             is_admin = os.geteuid() == 0
         except AttributeError:
@@ -506,14 +505,14 @@ def fn_07_butterfly():
     print()
     print(f"{DARK}" + "─" * 106 + f"{RESET}")
 
-    # ---------- Получаем список пользователей и их детали ----------
+    
     print(f"{GRAY}[*] User accounts on this machine:{RESET}")
     users = []
 
     if system == "Windows":
         try:
             import subprocess
-            # Получаем список пользователей через net user
+            
             output = subprocess.check_output("net user", shell=True, text=True, encoding='cp866')
             lines = output.splitlines()
             user_list = []
@@ -523,7 +522,7 @@ def fn_07_butterfly():
                     if len(part) > 1 and not any(c in part for c in '.-_'):
                         if part not in ['User', 'accounts', '----', 'Success']:
                             user_list.append(part)
-            # Для каждого пользователя получаем детали
+            
             for username in user_list[:10]:
                 try:
                     detail = subprocess.check_output(f"net user {username}", shell=True, text=True, encoding='cp866')
@@ -538,7 +537,7 @@ def fn_07_butterfly():
                         if "Администратор" in dline or "Administrator" in dline:
                             if "Да" in dline or "Yes" in dline:
                                 is_admin_flag = True
-                    # Проверяем активен ли сейчас
+                    
                     active = "Inactive"
                     try:
                         who = subprocess.check_output("query user", shell=True, text=True, encoding='cp866')
@@ -564,7 +563,7 @@ def fn_07_butterfly():
         except Exception as e:
             users = [{"name": f"(Error: {e})", "admin": "", "home": "", "last_login": "", "active": ""}]
     else:
-        # Linux / МОС / macOS
+        
         try:
             import subprocess
             with open('/etc/passwd', 'r') as f:
@@ -576,10 +575,10 @@ def fn_07_butterfly():
                         username = parts[0]
                         try:
                             uid = int(parts[2])
-                            # В Linux пользователи обычно имеют UID >= 1000
+                            
                             if uid >= 1000:
                                 home = parts[5]
-                                # Проверяем администратора (группы sudo/wheel/admin)
+                                
                                 is_admin_flag = False
                                 try:
                                     groups = subprocess.check_output(f"groups {username}", shell=True, text=True)
@@ -587,7 +586,7 @@ def fn_07_butterfly():
                                         is_admin_flag = True
                                 except:
                                     pass
-                                # Последний вход
+                                
                                 last_login = "Never"
                                 try:
                                     lastlog = subprocess.check_output(f"lastlog -u {username}", shell=True, text=True)
@@ -596,7 +595,7 @@ def fn_07_butterfly():
                                         last_login = " ".join(lines[1].split()[3:])
                                 except:
                                     pass
-                                # Активен сейчас?
+                                
                                 active = "Inactive"
                                 try:
                                     who = subprocess.check_output("who", shell=True, text=True)
@@ -616,7 +615,7 @@ def fn_07_butterfly():
         except Exception as e:
             users = [{"name": f"(Error: {e})", "admin": "", "home": "", "last_login": "", "active": ""}]
 
-    # ---------- Вывод карточек пользователей ----------
+    
     if users and users[0]["name"] != "(Could not retrieve)":
         for idx, user in enumerate(users[:15]):
             print()
@@ -632,7 +631,7 @@ def fn_07_butterfly():
     print()
     print(f"{DARK}" + "─" * 106 + f"{RESET}")
 
-    # ---------- ARP-таблица (соседи) ----------
+    
     print(f"{GRAY}[*] ARP table (active devices in local network):{RESET}")
     arp_data = []
     try:
@@ -695,10 +694,10 @@ def fn_08_errors():
             import threading
             import ctypes
 
-            # Звук ошибки
+            
             ctypes.windll.user32.MessageBeep(0x10)
 
-            # Получаем размер экрана
+            
             root = tk.Tk()
             root.withdraw()
             screen_width = root.winfo_screenwidth()
@@ -712,7 +711,7 @@ def fn_08_errors():
                 y = random.randint(0, screen_height - 150)
 
                 win = tk.Tk()
-                win.title(f"TUNGTUNGHOOK ON TOP - Error {i+1}")
+                win.title(f"Internal error {i+1}")
                 win.geometry(f"400x150+{x}+{y}")
                 win.resizable(False, False)
                 win.attributes('-topmost', True)
@@ -721,12 +720,12 @@ def fn_08_errors():
                                  fg="red", font=("Arial", 10, "bold"))
                 label.pack(pady=20)
 
-                btn = tk.Button(win, text="OK", command=win.destroy, width=10)
+                btn = tk.Button(win, text="ok", command=win.destroy, width=10)
                 btn.pack(pady=10)
 
                 windows.append(win)
 
-            # Запускаем каждое окно в отдельном потоке
+            
             def run_window(win):
                 win.mainloop()
 
@@ -738,10 +737,10 @@ def fn_08_errors():
 
         except Exception as e:
             print(f"{W3}[!]{RESET} Error showing windows: {e}")
-            # Fallback через стандартный MessageBox
+            
             import ctypes
             for i, msg in enumerate(error_messages[:15]):
-                ctypes.windll.user32.MessageBoxW(None, msg, f"TUNGTUNGHOOK ON TOP - Error {i+1}", 0x10)
+                ctypes.windll.user32.MessageBoxW(None, msg, f"Internal error {i+1}", 0x10)
                 time.sleep(0.1)
 
     elif system == "Linux":
@@ -750,7 +749,7 @@ def fn_08_errors():
             import random
             import re
 
-            # Определяем разрешение экрана
+            
             output = subprocess.check_output("xrandr --current | grep '*' | head -1", shell=True, text=True)
             match = re.search(r'(\d+)x(\d+)', output)
             if match:
@@ -760,7 +759,7 @@ def fn_08_errors():
                 screen_width = 1920
                 screen_height = 1080
 
-            # Звук ошибки
+            
             try:
                 subprocess.Popen(["paplay", "/usr/share/sounds/freedesktop/stereo/dialog-error.oga"],
                                  stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -770,7 +769,7 @@ def fn_08_errors():
             for i in range(15):
                 x = random.randint(0, screen_width - 400)
                 y = random.randint(0, screen_height - 150)
-                title = f"TUNGTUNGHOOK ON TOP - Error {i+1}"
+                title = f"Internal errorr {i+1}"
                 text = error_messages[i]
                 subprocess.Popen(
                     ["zenity", "--error", "--title", title, "--text", text,
@@ -782,13 +781,13 @@ def fn_08_errors():
 
         except Exception as e:
             print(f"{W3}[!]{RESET} Error showing windows: {e}")
-            # Fallback через notify-send
+            
             for i, msg in enumerate(error_messages[:15]):
-                subprocess.Popen(["notify-send", f"TUNGTUNGHOOK ON TOP - Error {i+1}", msg, "-u", "critical"])
+                subprocess.Popen(["notify-send", f"Internal error {i+1}", msg, "-u", "critical"])
                 time.sleep(0.1)
 
     else:
-        # Для других ОС — вывод в консоль
+        
         for i, msg in enumerate(error_messages[:15]):
             print(f"{W3}[ERROR {i+1}]{RESET} {gradient_text('TUNGTUNGHOOK ON TOP → ' + msg)}")
 
@@ -863,7 +862,7 @@ def fn_11_python():
     report_lines.append("=" * 60)
     report_lines.append("")
 
-    # ---------- 1. Информация о текущем компьютере ----------
+    
     print(f"{GRAY}[*] Gathering local machine info...{RESET}")
     report_lines.append("[LOCAL MACHINE]")
     hostname = socket.gethostname()
@@ -880,7 +879,7 @@ def fn_11_python():
     report_lines.append(f"IP: {local_ip}")
     report_lines.append(f"MAC: {mac_hex}")
 
-    # ---------- 2. Сканирование портов на localhost ----------
+    
     print(f"\n{GRAY}[*] Scanning localhost (127.0.0.1) for open ports...{RESET}")
     report_lines.append("\n[LOCALHOST PORT SCAN]")
     local_ports = scan_common_ports("127.0.0.1")
@@ -894,7 +893,7 @@ def fn_11_python():
         print(f"{GRAY}No open ports found on localhost.{RESET}")
         report_lines.append("No open ports found on localhost.")
 
-    # ---------- 3. Сканирование локальной сети (ARP) ----------
+    
     print(f"\n{GRAY}[*] Scanning local network for active devices...{RESET}")
     report_lines.append("\n[ACTIVE NETWORK DEVICES]")
     arp_devices = get_arp_devices(system)
@@ -902,7 +901,7 @@ def fn_11_python():
         print(f"{W1}[+] Found {len(arp_devices)} active devices in local network.{RESET}")
         report_lines.append(f"Total devices found: {len(arp_devices)}")
         for idx, (ip, mac, hostname) in enumerate(arp_devices, 1):
-            # Пропускаем localhost (уже отсканирован)
+            
             if ip == "127.0.0.1" or ip.startswith("127."):
                 continue
             print()
@@ -912,7 +911,7 @@ def fn_11_python():
             print(f"   {GRAY_DARK}│{RESET}  Hostname: {gradient_text(hostname)}")
             report_lines.append(f"Device #{idx}: IP={ip}, MAC={mac}, Hostname={hostname}")
 
-            # Сканируем порты для этого устройства
+            
             ports = scan_common_ports(ip)
             if ports:
                 print(f"   {GRAY_DARK}│{RESET}  Open ports:")
@@ -928,7 +927,7 @@ def fn_11_python():
         print(f"{W3}[!] No ARP entries found. Is the network active?{RESET}")
         report_lines.append("No ARP entries found.")
 
-    # ---------- 4. Сохранение отчёта ----------
+    
     try:
         desktop = os.path.join(os.path.expanduser("~"), "Desktop")
         if not os.path.exists(desktop):
@@ -946,7 +945,7 @@ def fn_11_python():
     print(f"{W1}[+]{RESET} Network scan completed.")
 
 
-# Вспомогательные функции для сканера (добавьте их выше или внутрь)
+
 
 def scan_common_ports(target_ip):
     """Сканирует популярные порты на заданном IP и возвращает список (port, service, is_vulnerable)"""
@@ -1037,25 +1036,25 @@ def fn_12_all_nets():
         try:
             import subprocess
             import re
-            # Получаем список интерфейсов и IP
+            
             output = subprocess.check_output("ip addr show", shell=True, text=True)
             interfaces = re.findall(r'^\d+: (\w+):', output, re.MULTILINE)
             for iface in interfaces:
                 print(f"{GRAY}[INTERFACE]{RESET} {gradient_text(iface)}")
-                # Получаем IP для интерфейса
+                
                 ip_output = subprocess.check_output(f"ip addr show {iface}", shell=True, text=True)
                 ips = re.findall(r'inet (\d+\.\d+\.\d+\.\d+/\d+)', ip_output)
                 for ip in ips:
                     print(f"   {GRAY_DARK}├─{RESET} IP: {gradient_text(ip)}")
-                # MAC
+                
                 mac = re.search(r'link/ether ([0-9a-f:]+)', ip_output)
                 if mac:
                     print(f"   {GRAY_DARK}├─{RESET} MAC: {gradient_text(mac.group(1))}")
-                # Состояние
+                
                 state = re.search(r'state (\w+)', ip_output)
                 if state:
                     print(f"   {GRAY_DARK}├─{RESET} State: {gradient_text(state.group(1))}")
-            # Шлюз по умолчанию
+            
             route = subprocess.check_output("ip route show default", shell=True, text=True)
             gateway = re.search(r'via (\d+\.\d+\.\d+\.\d+)', route)
             if gateway:
@@ -1066,7 +1065,7 @@ def fn_12_all_nets():
         try:
             import subprocess
             output = subprocess.check_output("ipconfig /all", shell=True, text=True, encoding='cp866')
-            print(gradient_text(output[:1000]))  # краткий вывод
+            print(gradient_text(output[:1000])) 
         except:
             print("Could not retrieve network info.")
     else:
@@ -1101,7 +1100,7 @@ def fn_13_how_to_use():
 def fn_14_py_syntax():
     loading("Opening Python Syntax Manual")
     print()
-    # Разделитель (без вызова line())
+    
     print(f"{DARK}" + "─" * 106 + f"{RESET}")
 
     print(f" {W1}╭─{RESET} {gradient_text('PYTHON BASIC SYNTAX')}")
@@ -1145,16 +1144,16 @@ def fn_14_py_syntax():
         ])
     ]
 
-    for title, code_lines in examples:  # переменная code_lines, а не line
+    for title, code_lines in examples:  
         print(f" {W1}│{RESET} {gradient_text(f'─── {title} ───')}")
-        for code_line in code_lines:   # переменная code_line
+        for code_line in code_lines:   
             print(f" {W1}│{RESET}   {gradient_text(code_line)}")
         print()
 
     print(f" {W1}│{RESET}")
     print(f" {W1}╰─{RESET} {gradient_text('📖 Full documentation (RU): https://docs.python.org/ru/3/')}")
     print()
-    # Ещё один разделитель
+    
     print(f"{DARK}" + "─" * 106 + f"{RESET}")
 
     print(f"{W1}[+]{RESET} Python syntax manual loaded.")
@@ -1163,7 +1162,7 @@ def fn_14_py_syntax():
 def fn_15_lua_helper():
     loading("Opening Lua helper Manual")
     print()
-    # Разделитель (без вызова line())
+    
     print(f"{DARK}" + "─" * 106 + f"{RESET}")
 
     print(f" {W1}╭─{RESET} {gradient_text('LUA BASIC SYNTAX')}")
@@ -1217,16 +1216,16 @@ def fn_15_lua_helper():
         ])
     ]
 
-    for title, code_lines in examples:  # переменная code_lines
+    for title, code_lines in examples:  
         print(f" {W1}│{RESET} {gradient_text(f'─── {title} ───')}")
-        for code_line in code_lines:   # переменная code_line
+        for code_line in code_lines:   
             print(f" {W1}│{RESET}   {gradient_text(code_line)}")
         print()
 
     print(f" {W1}│{RESET}")
     print(f" {W1}╰─{RESET} {gradient_text('📖 Full documentation (RU): https://www.lua.org/manual/5.3/ru/')}")
     print()
-    # Ещё один разделитель
+    
     print(f"{DARK}" + "─" * 106 + f"{RESET}")
 
     print(f"{W1}[+]{RESET} Lua helper manual loaded.")
@@ -1236,7 +1235,7 @@ def fn_16_reverse_eng():
     loading("Opening Reverse Engineering Manual")
     print()
 
-    # Разделитель без вызова line()
+    
     print(f"{DARK}" + "─" * 106 + f"{RESET}")
 
     system = platform.system()
@@ -1254,7 +1253,7 @@ def fn_16_reverse_eng():
     print(f" {W1}│{RESET}   {GRAY}Python Version:{RESET} {gradient_text(python_ver)}")
     print(f" {W1}│{RESET}")
 
-    # Сетевая информация
+    
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.connect(("8.8.8.8", 80))
@@ -1264,18 +1263,18 @@ def fn_16_reverse_eng():
         local_ip = "127.0.0.1"
     print(f" {W1}│{RESET}   {GRAY}Local IP:{RESET} {gradient_text(local_ip)}")
 
-    # MAC-адрес
+    
     import uuid
     mac_int = uuid.getnode()
     mac_hex = ':'.join(('{:02x}'.format((mac_int >> i) & 0xff) for i in range(40, -1, -8)))
     print(f" {W1}│{RESET}   {GRAY}MAC Address:{RESET} {gradient_text(mac_hex)}")
 
-    # Информация о пользователе
+    
     import getpass
     current_user = getpass.getuser()
     print(f" {W1}│{RESET}   {GRAY}Current User:{RESET} {gradient_text(current_user)}")
 
-    # Права администратора
+    
     is_admin = False
     if system == "Windows":
         try:
@@ -1290,7 +1289,7 @@ def fn_16_reverse_eng():
             is_admin = False
     print(f" {W1}│{RESET}   {GRAY}Administrator:{RESET} {gradient_text('Yes' if is_admin else 'No')}")
 
-    # Объём оперативной памяти (через os, без psutil)
+    
     try:
         if system == "Windows":
             import ctypes
@@ -1315,7 +1314,7 @@ def fn_16_reverse_eng():
             else:
                 total_ram = avail_ram = "Unknown"
         else:
-            # Linux: читаем /proc/meminfo
+            
             with open('/proc/meminfo', 'r') as f:
                 for line in f:
                     if line.startswith('MemTotal:'):
@@ -1335,7 +1334,7 @@ def fn_16_reverse_eng():
     print(f" {W1}╰─{RESET} {gradient_text('REVERSE ENGINEERING MANUAL')}")
     print()
 
-    # Reverse Engineering Manual
+    
     manual = [
         "1. Debugging Tools:",
         "   - Windows: x64dbg, WinDbg, IDA Pro, Ghidra",
@@ -1465,7 +1464,7 @@ def render_ui():
         print(header_line)
         print(BORDER)
 
-    # Строки меню
+    
     for i in range(4):
         c1 = gradient_text(f"{col1[i]:<{WIDTH}}")
         c2 = gradient_text(f"{col2[i]:<{WIDTH}}")
@@ -1475,7 +1474,7 @@ def render_ui():
 
         if _first_run:
             print(line, flush=True)
-            time.sleep(0.05)  # задержка между строками меню
+            time.sleep(0.05)  
         else:
             print(line)
 
